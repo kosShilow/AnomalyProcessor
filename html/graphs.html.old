@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style type="text/css">
+        body {
+            font-family: "Arial", serif;
+            font-size: 18px;
+            margin: 10px;
+        }
+        .legend {
+            font-size: 24px;
+            color: #008000;
+        }
+        #headline {
+            font-family: "Arial", serif;
+            font-size: 30px;
+            color: #880015;
+        }
+    </style>
+
+  </head>
+
+<body>
+
+  <table border="0" align="left" width=100%>
+  <tr>
+    <td align="center">
+      <div id="plotter">
+        <table border="0" width=100%>
+          <tr><td align="center"><div id="headline">{{ node }} {{ iface }}</div></td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><div class="legend">Traffic</div></td></tr>
+          <tr><td>
+            <table border="0" width=100%>
+              <tr align="center"><td>Input:</td><td>Output:</td></tr>
+              <tr align="center"><td><img src="png/{{ ip_client }}/bits_in.png"></td><td><img src="png/{{ ip_client }}/bits_out.png"></td></tr>
+            </table>
+          </td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><div class="legend">Unicast Packets</div></td></tr>
+          <tr><td>
+            <table border="0" width=100%>
+              <tr align="center"><td>Input:</td><td>Output:</td></tr>
+              <tr align="center"><td><img src="png/{{ ip_client }}/ucast_in.png"></td><td><img src="png/{{ ip_client }}/ucast_out.png"></td></tr>
+            </table>
+          </td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><div class="legend">Broadcast Packets</div></td></tr>
+          <tr><td>
+            <table border="0" width=100%>
+              <tr align="center"><td>Input:</td><td>Output:</td></tr>
+              <tr align="center"><td><img src="png/{{ ip_client }}/broadcast_in.png"></td><td><img src="png/{{ ip_client }}/broadcast_out.png"></td></tr>
+            </table>
+          </td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><div class="legend">Multicast Packets</div></td></tr>
+          <tr><td>
+            <table border="0" width=100%>
+              <tr align="center"><td>Input:</td><td>Output:</td></tr>
+              <tr align="center"><td><img src="png/{{ ip_client }}/multicast_in.png"></td><td><img src="png/{{ ip_client }}/multicast_out.png"></td></tr>
+            </table>
+          </td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><div class="legend">Errors</div></td></tr>
+          <tr><td>
+            <table border="0" width=100%>
+              <tr align="center"><td>Input:</td><td>Output:</td></tr>
+              <tr align="center"><td><img src="png/{{ ip_client }}/errors_in.png"></td><td><img src="png/{{ ip_client }}/errors_out.png"></td></tr>
+            </table>
+          </td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><div class="legend">Discards</div></td></tr>
+          <tr><td>
+            <table border="0" width=100%>
+              <tr align="center"><td>Input:</td><td>Output:</td></tr>
+              <tr align="center"><td><img src="png/{{ ip_client }}/discards_in.png"></td><td><img src="png/{{ ip_client }}/discards_out.png"></td></tr>
+            </table>
+          </td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><br></td></tr>
+          <tr><td align="center"><div class="legend">Unknown Packets</div></td></tr>
+          <tr><td>
+            <table border="0" width=100%>
+              <tr align="center"><td><img src="png/{{ ip_client }}/unknown_protocols_out.png"></td></tr>
+            </table>
+          </td></tr>
+        </table>
+      </div>
+    </td>
+  </tr>
+  </table>
+
+</body>
+ 
+</html>

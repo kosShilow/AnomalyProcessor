@@ -1,0 +1,6 @@
+png/*
+venv/*
+.idea/*
+*.log
+*.out
+*.in

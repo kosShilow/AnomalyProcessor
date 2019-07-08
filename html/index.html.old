@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!doctype html>
+<html>
+  <head>
+    <title>Traffic network</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <style type="text/css">
+        body {
+            font-family: "Arial", serif;
+            font-size: 18px;
+            margin: 10px;
+        }
+	#logout {
+	    float: right;
+	    text-align: right;
+	}
+//        #main {
+//            opacity: .5;
+//        }
+        #tree_panel {
+    	    margin: auto;
+            background:#FCFBC4;
+            border: 3px solid #000;
+            border-radius: 10px;
+    	    width: 300px;
+    	    height: 1000px;
+            overflow: auto;
+        }
+        #panel {
+    	    margin: auto;
+            background:#FCFBC4;
+            border: 3px solid #000;
+            border-radius: 10px;
+    	    height: 1000px;
+        }
+        #header {
+    	    margin: auto;
+            background:#FCFBC4;
+            border: 3px solid #000;
+            border-radius: 10px;
+    	    height: 10px;
+        }
+
+        #graphs {
+    	    margin: auto;
+//            background:#FCFBC4;
+//            border: 3px solid #000;
+//            border-radius: 10px;
+    	    height: 1000px;
+        }
+        .tree span:hover {
+          font-weight: bold;
+        }
+        .tree span {
+          cursor: pointer;
+        }
+
+        #loader {
+          margin: 0 auto;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translateY(-50%);
+          border: 16px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 16px solid #3498db;
+          width: 60px;
+          height: 60px;
+          -webkit-animation: spin 2s linear infinite; /* Safari */
+          animation: spin 2s linear infinite;
+        }
+
+        /* Safari */
+        @-webkit-keyframes spin {
+          0% { -webkit-transform: rotate(0deg); }
+          100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+    </style>
+
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        var host = '10.120.63.10';
+        var port = '9999';
+        var uri = '/ws';
+        var num_nodes = 0;
+
+        // create websocket instance
+        ws = new WebSocket("ws://" + host + ":" + port + uri);
+//        ws = new WebSocket("ws://10.120.63.10:9999/ws");
+
+        // Handle incoming websocket message callback
+        ws.onmessage = function(evt) {
+//          alert("Message: "+evt.data);
+          var loader = document.getElementById("loader");
+          loader.hidden = true;
+          var main = document.getElementById("main");
+          var view_mode = document.getElementById("view_mode");
+//          main.style.opacity = 1;
+          if(evt.data.startsWith("<ul class=\"tree\">")) {
+            document.getElementById("tree_panel").innerHTML = evt.data;
+
+            var tree = document.getElementsByTagName('ul')[0];
+
+            var treeLis = tree.getElementsByTagName('li');
+            var container =  tree.getElementsByTagName('ul');
+
+            num_nodes = container.length;
+            for (var i = 0; i < container.length; i++) {
+              var ul = container[i];
+              ul.hidden=true;
+            }
+
+            /* wrap all textNodes into spans */
+            for (var i = 0; i < treeLis.length; i++) {
+              var li = treeLis[i];
+
+              var span = document.createElement('span');
+              li.insertBefore(span, li.firstChild);
+              span.appendChild(span.nextSibling);
+            }
+
+            /* catch clicks on whole tree */
+            tree.onclick = function(event) {
+              var target = event.target;
+
+              if (target.tagName != 'SPAN') {
+                return;
+              }
+
+              /* now we know the SPAN is clicked */
+              var childrenContainer = target.parentNode.getElementsByTagName('ul')[0];
+              if (!childrenContainer) { // no children
+                ws.send("node_iface:"+target.parentNode.id+";"+target.parentNode.innerText);
+//                alert(target.parentNode.id+" - "+target.parentNode.innerText);
+                  var loader = document.getElementById("loader");
+                  loader.hidden = false;
+                  var panel = document.getElementById("panel");
+//                  panel.style.opacity = 0.5;
+              } else {
+                childrenContainer.hidden = !childrenContainer.hidden;
+              }
+            }
+          }
+
+          if(evt.data == "GRAPHS OK") {
+            var loader = document.getElementById("loader");
+            loader.hidden = true;
+            var panel = document.getElementById("panel");
+//            panel.style.opacity = 1;
+            var iframe = document.getElementById('graphs');
+            iframe.src = iframe.src;
+            iframe.style.visibility="visible";
+          }
+
+          if(evt.data.startsWith( "view_mode_ok:")) {
+            mas = evt.data.split(":");
+            alert(mas[1]);
+          }
+        };
+
+        // Close Websocket callback
+        ws.onclose = function(evt) {
+//          alert("Closed!");
+        };
+
+        // Open Websocket callback
+        ws.onopen = function(evt) {
+//          alert("Connected!");
+        };
+
+        view_mode.onchange = function(event) {
+            var selectedOption = this.options[this.selectedIndex];
+            alert ("The selected option is " + selectedOption.value);
+            ws.send("view_mode:"+selectedOption.value);
+        };
+
+      });
+
+    </script>
+  </head>
+
+<body>
+  <table id="header" border="0" width=100%>
+    <tr>
+      <td><table border="0" align="left" width=30%><tr>
+        <td><div>View mode:</div></td>
+        <td align="left">
+          <div>
+            <select id="view_mode">
+              <option value="All">All</option>
+              <option value="Anomaly">Anomaly</option>
+            </select>
+          </div>
+        </td>
+      </tr></table></td>
+      <td width=10%><a href="/logout" id="logout">logout</a><br></td>
+    </tr>
+  </table>
+  <hr>
+
+  <table border="0" id="main" align="left" width=100%>
+  <tr>
+    <td align="left" width=10%>
+      <div id="tree_panel">
+      </div>
+    </td>
+    <td align="left" valign="top">
+      <div id="panel"><iframe id="graphs" width="100%" hight="100%" style="visibility: hidden;" src="graphs"></div>
+      </iframe>
+    </td>
+  </tr>
+  </table>
+  <div id="loader"></div>
+</body>
+ 
+</html>
